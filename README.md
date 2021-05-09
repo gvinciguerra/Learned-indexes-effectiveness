@@ -1,10 +1,12 @@
-# Why are learned indexes so effective? [ICML20]
+# Why are learned indexes so effective?
 
-This repository contains the code to reproduce the experiments in the paper:
+This repository contains the code to reproduce the experiments in the papers:
+
+> Paolo Ferragina, Fabrizio Lillo, and Giorgio Vinciguerra. On the performance of learned data structures. Theoretical Computer Science, 2021. https://doi.org/10.1016/j.tcs.2021.04.015.
 
 > Paolo Ferragina, Fabrizio Lillo, and Giorgio Vinciguerra. Why are learned indexes so effective?. In Proceedings of the 37th International Conference on Machine Learning (ICML). PMLR, 2020.
 
-In brief, the paper gives the first mathematical proof that, under certain general assumptions on the input data, the **PGM-index** ([website](https://pgm.di.unipi.it) | [repository](https://github.com/gvinciguerra/PGM-index)) is orders of magnitude more compressed than [traditional indexes](https://en.wikipedia.org/wiki/B-tree).
+In brief, these papers give the first mathematical proof that, under certain general assumptions on the input data, the **PGM-index** ([website](https://pgm.di.unipi.it) | [repository](https://github.com/gvinciguerra/PGM-index)) is orders of magnitude more compressed than [traditional indexes](https://en.wikipedia.org/wiki/B-tree).
 This result is important because it gives solid theoretical grounds to the excellent practical performance of [learned indexes](http://learned.di.unipi.it/publication/learned-data-structures/), pushing forward a new generation of data systems based on them.
 
 ## Build and run
@@ -56,13 +58,22 @@ This project is licensed under the terms of the GNU General Public License v3.0.
 If you use this code for your research, please cite:
 
 ```
+@article{Ferragina:2021tcs,
+	author = {Paolo Ferragina and Fabrizio Lillo and Giorgio Vinciguerra},
+	doi = {https://doi.org/10.1016/j.tcs.2021.04.015},
+	issn = {0304-3975},
+	journal = {Theoretical Computer Science},
+	keywords = {Learned indexes, Data structures, B-trees, Predecessor search},
+	title = {On the performance of learned data structures},
+	year = {2021}}
+
 @inproceedings{Ferragina:2020icml,
-	Author = {Ferragina, Paolo and Lillo, Fabrizio and Vinciguerra, Giorgio},
-	Booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
-	Month = jul,
-	Publisher = {PMLR},
-	Series = {Proceedings of Machine Learning Research},
-	Title = {Why are learned indexes so effective?},
-	Volume = {119},
-	Year = {2020}}
+	author = {Ferragina, Paolo and Lillo, Fabrizio and Vinciguerra, Giorgio},
+	booktitle = {Proceedings of the 37th International Conference on Machine Learning (ICML)},
+	month = jul,
+	publisher = {PMLR},
+	series = {Proceedings of Machine Learning Research},
+	title = {Why are learned indexes so effective?},
+	volume = {119},
+	year = {2020}}
 ```

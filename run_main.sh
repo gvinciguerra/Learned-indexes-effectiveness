@@ -24,3 +24,11 @@ stdbuf -o 0 time $exe lognormal 1 0.5  "$@" | tee results/lognormal_m1_s0.5_met3
 stdbuf -o 0 time $exe gamma 1 1 "$@" | tee results/gamma_scale1_shape1_met1.csv
 stdbuf -o 0 time $exe gamma 2 3 "$@" | tee results/gamma_scale3_shape2_met2.csv
 stdbuf -o 0 time $exe gamma 3 6 "$@" | tee results/gamma_scale6_shape3_met3.csv
+
+stdbuf -o 0 time $exe uniform 0 1 -o5   "$@" | tee results/ma5.csv
+stdbuf -o 0 time $exe uniform 0 1 -o50  "$@" | tee results/ma50.csv
+stdbuf -o 0 time $exe uniform 0 1 -o500 "$@" | tee results/ma500.csv
+
+stdbuf -o 0 time $exe uniform 0 1 -a0.1 "$@" | tee results/ar0.1.csv
+stdbuf -o 0 time $exe uniform 0 1 -a0.5 "$@" | tee results/ar0.5.csv
+stdbuf -o 0 time $exe uniform 0 1 -a0.9 "$@" | tee results/ar0.9.csv

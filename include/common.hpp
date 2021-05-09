@@ -24,55 +24,63 @@
 
 constexpr auto infinite_exit_time = 1000000000ul;
 
-template<typename Rng>
-uint64_t simulate_opt(Rng &random_gap, double epsilon, size_t limit = infinite_exit_time) {
+template<typename Dist>
+std::tuple<uint64_t, uint64_t, double, double>
+simulate(Dist &gap_distribution, double epsilon, double slope, size_t ma_order, bool met_only) {
     std::random_device rd;
     thread_local std::mt19937 gen(rd());
     double x = 0;
+    uint64_t strip_exit_time = infinite_exit_time;
+
+    std::vector<double> memory(ma_order);
+    std::generate(memory.begin(), memory.end(), std::bind(gap_distribution, gen));
+    auto memory_sum = std::accumulate(memory.begin(), memory.end(), 0.);
 
     OptimalPiecewiseLinearModel<double, double> opt(epsilon, epsilon);
     opt.add_point(0, 0);
 
     for (uint64_t y = 1; y < infinite_exit_time; ++y) {
-        x += random_gap(gen);
-        if (!opt.add_point(x, y))
-            return y;
+        auto gap = gap_distribution(gen);
+        memory_sum -= memory[y % ma_order];
+        x += gap + memory_sum;
+        memory[y % ma_order] = gap;
+        memory_sum += gap;
+
+        if (strip_exit_time == infinite_exit_time && std::fabs(y - slope * x) > epsilon) {
+            strip_exit_time = y;
+            if (met_only)
+                return {0, strip_exit_time, 0, 0};
+        }
+        if (!met_only && !opt.add_point(x, y)) {
+            auto[lo, hi] = opt.get_slope_range();
+            return {y, strip_exit_time, lo, hi};
+        }
     }
 
-    return infinite_exit_time;
+    return {infinite_exit_time, strip_exit_time, 0, 1};
 }
 
-template<typename Rng>
-uint64_t simulate_met(Rng &random_gap, double epsilon, double theoretical_slope, size_t limit = infinite_exit_time) {
-    std::random_device rd;
-    thread_local std::mt19937 gen(rd());
-    double x = 0;
-
-    for (uint64_t y = 1; y < limit; ++y) {
-        x += random_gap(gen);
-        if (std::fabs(y - theoretical_slope * x) > epsilon)
-            return y;
-    }
-
-    return infinite_exit_time;
-}
-
-template<typename Rng>
+template<typename Dist>
 std::tuple<uint64_t, uint64_t, double, double>
-simulate(Rng &random_gap, double epsilon, double theoretical_slope) {
+simulate_ar1(Dist &noise_distribution, double epsilon, double slope, double phi, bool met_only) {
     std::random_device rd;
     thread_local std::mt19937 gen(rd());
     double x = 0;
+    double gap = 0;
     uint64_t strip_exit_time = infinite_exit_time;
 
     OptimalPiecewiseLinearModel<double, double> opt(epsilon, epsilon);
     opt.add_point(0, 0);
 
     for (uint64_t y = 1; y < infinite_exit_time; ++y) {
-        x += random_gap(gen);
-        if (strip_exit_time == infinite_exit_time && std::fabs(y - theoretical_slope * x) > epsilon)
+        gap = phi * gap + noise_distribution(gen);
+        x += gap;
+        if (strip_exit_time == infinite_exit_time && std::fabs(y - slope * x) > epsilon) {
             strip_exit_time = y;
-        if (!opt.add_point(x, y)) {
+            if (met_only)
+                return {0, strip_exit_time, 0, 0};
+        }
+        if (!met_only && !opt.add_point(x, y)) {
             auto[lo, hi] = opt.get_slope_range();
             return {y, strip_exit_time, lo, hi};
         }
